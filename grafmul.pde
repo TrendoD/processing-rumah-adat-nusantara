@@ -118,11 +118,9 @@ void draw() {
     noTint();
   }
   
-  // Hitung alpha untuk teks (fade-in 0-1s, stabil 1-9s, fade-out 9-10s)
+  // Hitung alpha untuk teks (stabil 0-9s, fade-out 9-10s)
   float textAlpha = 0;
-  if (elapsed < 1) {
-    textAlpha = map(elapsed, 0, 1, 0, 255);
-  } else if (elapsed < 9) {
+  if (elapsed < 9) {
     textAlpha = 255;
   } else if (elapsed < 10) {
     textAlpha = map(elapsed, 9, 10, 255, 0);
