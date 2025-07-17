@@ -15,12 +15,16 @@ long startTime = 0;
 
 // Tambahkan variabel global setelah deklarasi startTime
 PImage introImg;
+// Tambahkan variabel untuk gambar rumah Sumatra
+PImage sumatraImg;
 
 void setup() {
   size(1200, 625);
   
   // Load gambar intro
   introImg = loadImage("intro.png");
+  // Load gambar rumah Sumatra
+  sumatraImg = loadImage("Sumatra.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -98,6 +102,11 @@ void draw() {
   
   // Area untuk rumah adat (bagian tengah bawah)
   // Rumah adat dapat digambar di area ini
+  imageMode(CORNER);
+  float scaleFactor = 1.5;
+  float scaledWidth = sumatraImg.width * scaleFactor;
+  float scaledHeight = sumatraImg.height * scaleFactor;
+  image(sumatraImg, width/2 - scaledWidth/2, height - scaledHeight + 200, scaledWidth, scaledHeight);
   
   // Overlay intro image dan teks
   float elapsed = (millis() - startTime) / 1000.0;
