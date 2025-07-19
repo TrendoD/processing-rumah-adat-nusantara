@@ -43,6 +43,10 @@ PImage pnusaTenggaraImg;
 PImage malukuImg;
 PImage pmalukuImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Papua
+PImage papuaImg;
+PImage ppapuaImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -70,6 +74,10 @@ float nusaTenggaraFadeStart = 184.0; // Start fade-out of Nusa Tenggara scene
 
 // Scene 7: Maluku
 float malukuSceneStart = 185.0;
+float malukuFadeStart = 214.0; // Start fade-out of Maluku scene
+
+// Scene 8: Papua
+float papuaSceneStart = 215.0;
 
 void setup() {
   size(1200, 625);
@@ -98,6 +106,9 @@ void setup() {
   // Load gambar rumah dan orang adat Maluku
   malukuImg = loadImage("Maluku.png");
   pmalukuImg = loadImage("Pmaluku.png");
+  // Load gambar rumah dan orang adat Papua
+  papuaImg = loadImage("Papua.png");
+  ppapuaImg = loadImage("Ppapua.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -242,14 +253,30 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < papuaSceneStart) {
     // --- MALUKU SCENE ---
     
-    // 1. Draw Maluku Main Scene (runs from 185s onwards)
+    // 1. Draw Maluku Main Scene (runs from 185s to 215s)
     drawMainScene(malukuImg, pmalukuImg, elapsed - malukuSceneStart);
     
     // 2. Draw Maluku Transition Overlays (185s to 196s)
     drawTransitionOverlays(elapsed, malukuSceneStart, "Rumah Adat Maluku");
+    
+    // 3. Add a fade-to-black transition before the Papua scene starts
+    if (elapsed > malukuFadeStart) {
+      float fadeAlpha = map(elapsed, malukuFadeStart, papuaSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- PAPUA SCENE ---
+    
+    // 1. Draw Papua Main Scene (runs from 215s onwards)
+    drawMainScene(papuaImg, ppapuaImg, elapsed - papuaSceneStart);
+    
+    // 2. Draw Papua Transition Overlays (215s to 226s)
+    drawTransitionOverlays(elapsed, papuaSceneStart, "Rumah Adat Papua");
   }
 }
 
@@ -280,9 +307,15 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   // Draw house and people
   imageMode(CORNER);
   float scaleFactor = 1.5;
+  float houseYOffset = 200; // Default Y offset for the house
+
+  if (houseImg == papuaImg) {
+    scaleFactor = 1.2; // Perkecil rumah Papua
+    houseYOffset = 120; // Mundurkan rumah Papua lebih jauh (naikkan di layar)
+  }
   float scaledWidth = houseImg.width * scaleFactor;
   float scaledHeight = houseImg.height * scaleFactor;
-  image(houseImg, width/2 - scaledWidth/2, height - scaledHeight + 200, scaledWidth, scaledHeight);
+  image(houseImg, width/2 - scaledWidth/2, height - scaledHeight + houseYOffset, scaledWidth, scaledHeight);
   
   float peopleScale = 0.75;
   float pscaledWidth = peopleImg.width * peopleScale;
@@ -304,6 +337,9 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   } else if (houseImg == malukuImg) {
     peopleX -= 100; // Geser ke kiri
     peopleY += 20;  // Geser ke bawah
+  } else if (houseImg == papuaImg) {
+    peopleX += 20; // Geser ke kanan depan rumah (final adjustment)
+    peopleY += 50;  // Geser ke depan (bawah)
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
