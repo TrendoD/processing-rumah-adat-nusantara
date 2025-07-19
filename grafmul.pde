@@ -31,6 +31,10 @@ PImage pbaliImg;
 PImage kalimantanImg;
 PImage pkalimantanImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Sulawesi
+PImage sulawesiImg;
+PImage psulawesiImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -46,6 +50,10 @@ float baliFadeStart = 94.0; // Start fade-out of Bali scene
 
 // Scene 4: Kalimantan
 float kalimantanSceneStart = 95.0;
+float kalimantanFadeStart = 124.0; // Start fade-out of Kalimantan scene
+
+// Scene 5: Sulawesi
+float sulawesiSceneStart = 125.0;
 
 void setup() {
   size(1200, 625);
@@ -65,6 +73,9 @@ void setup() {
   // Load gambar rumah dan orang adat Kalimantan
   kalimantanImg = loadImage("Kalimantan.png");
   pkalimantanImg = loadImage("Pkalimantan.png");
+  // Load gambar rumah dan orang adat Sulawesi
+  sulawesiImg = loadImage("Sulawesi.png");
+  psulawesiImg = loadImage("Psulawesi.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -161,14 +172,30 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < sulawesiSceneStart) {
     // --- KALIMANTAN SCENE ---
     
-    // 1. Draw Kalimantan Main Scene (runs from 95s onwards)
+    // 1. Draw Kalimantan Main Scene (runs from 95s to 125s)
     drawMainScene(kalimantanImg, pkalimantanImg, elapsed - kalimantanSceneStart);
     
     // 2. Draw Kalimantan Transition Overlays (95s to 106s)
     drawTransitionOverlays(elapsed, kalimantanSceneStart, "Rumah Adat Kalimantan");
+
+    // 3. Add a fade-to-black transition before the Sulawesi scene starts
+    if (elapsed > kalimantanFadeStart) {
+      float fadeAlpha = map(elapsed, kalimantanFadeStart, sulawesiSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- SULAWESI SCENE ---
+    
+    // 1. Draw Sulawesi Main Scene (runs from 125s onwards)
+    drawMainScene(sulawesiImg, psulawesiImg, elapsed - sulawesiSceneStart);
+    
+    // 2. Draw Sulawesi Transition Overlays (125s to 136s)
+    drawTransitionOverlays(elapsed, sulawesiSceneStart, "Rumah Adat Sulawesi");
   }
 }
 
@@ -215,6 +242,8 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
     peopleY += 15; // Geser ke depan (bawah)
   } else if (houseImg == kalimantanImg) {
     peopleX -= 80; // Geser ke kiri agar dekat tangga
+  } else if (houseImg == sulawesiImg) {
+    peopleX -= 100; // Geser ke kiri
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
