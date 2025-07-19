@@ -17,6 +17,19 @@ long startTime = 0;
 PImage introImg;
 // Tambahkan variabel untuk gambar rumah Sumatra
 PImage sumatraImg;
+// Tambahkan variabel untuk gambar orang adat Sumatra
+PImage psumatraImg;
+// Tambahkan variabel untuk gambar rumah dan orang adat Jawa
+PImage jawaImg;
+PImage pjawaImg;
+
+// --- TIMING CONSTANTS ---
+// Scene 1: Sumatra
+float sumatraSceneStart = 5.0;
+float sumatraFadeStart = 34.0; // Start fade-out of Sumatra scene
+
+// Scene 2: Java
+float javaSceneStart = 35.0;
 
 void setup() {
   size(1200, 625);
@@ -25,6 +38,11 @@ void setup() {
   introImg = loadImage("intro.png");
   // Load gambar rumah Sumatra
   sumatraImg = loadImage("Sumatra.png");
+  // Load gambar orang adat Sumatra
+  psumatraImg = loadImage("Psumatra.png");
+  // Load gambar rumah dan orang adat Jawa
+  jawaImg = loadImage("Jawa.png");
+  pjawaImg = loadImage("Pjawa.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -59,90 +77,122 @@ void setup() {
 }
 
 void draw() {
-  time += 0.003; // Kecepatan perubahan waktu
+  float elapsed = (millis() - startTime) / 1000.0;
+
+  // --- TIMING CONSTANTS ---
+  // Scene 1: Sumatra
+  float sumatraSceneStart = 5.0;
+  float sumatraSceneEnd = 35.0; // Runs for 30s total (5s transition + 25s view)
   
-  // Update efek lingkungan
+  // Scene 2: Java
+  float javaSceneStart = 35.0;
+
+  // --- SCENE MANAGEMENT ---
+  if (elapsed < javaSceneStart) {
+    // --- INTRO & SUMATRA SCENE ---
+    
+    // 1. Initial Intro Image (0-5s)
+    if (elapsed < sumatraSceneStart) {
+      background(0);
+      float imageAlpha = map(elapsed, 4.0, 5.0, 255, 0);
+      tint(255, imageAlpha);
+      imageMode(CENTER);
+      image(introImg, width/2, height/2);
+      noTint();
+      return;
+    }
+    
+    // 2. Draw Sumatra Main Scene (runs from 5s to 35s)
+    drawMainScene(sumatraImg, psumatraImg, elapsed - sumatraSceneStart);
+    
+    // 3. Draw Sumatra Transition Overlays (5s to 15s)
+    drawTransitionOverlays(elapsed, sumatraSceneStart, "Rumah Adat Sumatra");
+
+    // 4. Add a fade-to-black transition before the Java scene starts
+    if (elapsed > sumatraFadeStart) {
+      float fadeAlpha = map(elapsed, sumatraFadeStart, javaSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+
+  } else {
+    // --- JAWA SCENE ---
+    
+    // 1. Draw Jawa Main Scene (runs from 35s onwards)
+    drawMainScene(jawaImg, pjawaImg, elapsed - javaSceneStart);
+    
+    // 2. Draw Jawa Transition Overlays (35s to 46s)
+    drawTransitionOverlays(elapsed, javaSceneStart, "Rumah Adat Jawa");
+  }
+}
+
+void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
+  time = sceneTime * 0.003;
+  
   updateEnvironmentalEffects();
-  
-  // Gambar langit dengan gradasi dinamis
   drawSky();
-  
-  // Gambar elemen-elemen background
   if (getSkyBrightness() < 0.3) {
-    // Tampilkan bintang saat malam
     for (Star s : stars) {
       s.display();
     }
   }
-  
-  // Gambar pegunungan jauh dengan efek paralaks
   drawDistantMountains();
-  
-  // Gambar awan dengan variasi kecepatan
   for (Cloud c : clouds) {
     c.update();
     c.display();
   }
-  
-  // Gambar pegunungan tengah dan dekat
   drawMiddleMountains();
   drawNearMountains();
-  
-  // Gambar sawah bertingkat dengan efek angin
   drawRiceFields();
-  
-  // Gambar efek fog/kabut
   drawFogEffect();
-  
-  // Gambar kunang-kunang dengan clustering
   updateFireflies();
   for (Firefly f : fireflies) {
     f.display();
   }
-  
-  // Area untuk rumah adat (bagian tengah bawah)
-  // Rumah adat dapat digambar di area ini
+
+  // Draw house and people
   imageMode(CORNER);
   float scaleFactor = 1.5;
-  float scaledWidth = sumatraImg.width * scaleFactor;
-  float scaledHeight = sumatraImg.height * scaleFactor;
-  image(sumatraImg, width/2 - scaledWidth/2, height - scaledHeight + 200, scaledWidth, scaledHeight);
+  float scaledWidth = houseImg.width * scaleFactor;
+  float scaledHeight = houseImg.height * scaleFactor;
+  image(houseImg, width/2 - scaledWidth/2, height - scaledHeight + 200, scaledWidth, scaledHeight);
   
-  // Overlay intro image dan teks
-  float elapsed = (millis() - startTime) / 1000.0;
+  float peopleScale = 0.75;
+  float pscaledWidth = peopleImg.width * peopleScale;
+  float pscaledHeight = peopleImg.height * peopleScale;
+  float peopleX = width/2 + scaledWidth/8 - pscaledWidth / 2;
+  float peopleY = height - pscaledHeight + 80;
+  image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
+}
+
+void drawTransitionOverlays(float elapsed, float sceneStart, String text) {
+  // Timings are relative to the scene start
+  float blackScreenEnd = sceneStart + 4.0;
+  float blackScreenFadeStart = sceneStart + 3.0;
   
-  // Hitung alpha untuk image (stabil 0-4s, fade-out 4-5s)
-  float imageAlpha = 0;
-  if (elapsed < 5) {
-    if (elapsed < 4) {
-      imageAlpha = 255;
-    } else {
-      imageAlpha = map(elapsed, 4, 5, 255, 0);
+  float textEnd = sceneStart + 10.0; // Stays for 5s after black screen is gone (5+5)
+  float textFadeStart = textEnd - 1.0;
+
+  // Black background overlay
+  if (elapsed < blackScreenEnd) {
+    float bgAlpha = 255;
+    if (elapsed > blackScreenFadeStart) {
+      bgAlpha = map(elapsed, blackScreenFadeStart, blackScreenEnd, 255, 0);
     }
-    
-    // Tampilkan gambar dengan efek fade
-    tint(255, imageAlpha);
-    imageMode(CENTER);
-    image(introImg, width/2, height/2);
-    noTint();
+    fill(0, bgAlpha);
+    rect(0, 0, width, height);
   }
-  
-  // Hitung alpha untuk teks (stabil 0-9s, fade-out 9-10s)
-  float textAlpha = 0;
-  if (elapsed < 9) {
-    textAlpha = 255;
-  } else if (elapsed < 10) {
-    textAlpha = map(elapsed, 9, 10, 255, 0);
-  }
-  
-  // Overlay teks jika alpha > 0
-  if (textAlpha > 0) {
-    fill(0, textAlpha);
+
+  // Text overlay
+  if (elapsed < textEnd) {
+    float textAlpha = 255;
+    if (elapsed > textFadeStart) {
+      textAlpha = map(elapsed, textFadeStart, textEnd, 255, 0);
+    }
+    fill(255, textAlpha);
     textAlign(CENTER, CENTER);
-    textSize(60);
-    text("RUMAH ADAT", width/2, height/2 - 50);
     textSize(50);
-    text("NUSANTARA", width/2, height/2 + 10);
+    text(text, width/2, height/2);
   }
 }
 
