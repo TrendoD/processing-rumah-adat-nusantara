@@ -39,6 +39,10 @@ PImage psulawesiImg;
 PImage nusaTenggaraImg;
 PImage pnusaTenggaraImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Maluku
+PImage malukuImg;
+PImage pmalukuImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -62,6 +66,10 @@ float sulawesiFadeStart = 154.0; // Start fade-out of Sulawesi scene
 
 // Scene 6: Nusa Tenggara
 float nusaTenggaraSceneStart = 155.0;
+float nusaTenggaraFadeStart = 184.0; // Start fade-out of Nusa Tenggara scene
+
+// Scene 7: Maluku
+float malukuSceneStart = 185.0;
 
 void setup() {
   size(1200, 625);
@@ -87,6 +95,9 @@ void setup() {
   // Load gambar rumah dan orang adat Nusa Tenggara
   nusaTenggaraImg = loadImage("NusaTenggara.png");
   pnusaTenggaraImg = loadImage("Pnusatenggara.png");
+  // Load gambar rumah dan orang adat Maluku
+  malukuImg = loadImage("Maluku.png");
+  pmalukuImg = loadImage("Pmaluku.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -215,14 +226,30 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < malukuSceneStart) {
     // --- NUSA TENGGARA SCENE ---
     
-    // 1. Draw Nusa Tenggara Main Scene (runs from 155s onwards)
+    // 1. Draw Nusa Tenggara Main Scene (runs from 155s to 185s)
     drawMainScene(nusaTenggaraImg, pnusaTenggaraImg, elapsed - nusaTenggaraSceneStart);
     
     // 2. Draw Nusa Tenggara Transition Overlays (155s to 166s)
     drawTransitionOverlays(elapsed, nusaTenggaraSceneStart, "Rumah Adat Nusa Tenggara");
+
+    // 3. Add a fade-to-black transition before the Maluku scene starts
+    if (elapsed > nusaTenggaraFadeStart) {
+      float fadeAlpha = map(elapsed, nusaTenggaraFadeStart, malukuSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- MALUKU SCENE ---
+    
+    // 1. Draw Maluku Main Scene (runs from 185s onwards)
+    drawMainScene(malukuImg, pmalukuImg, elapsed - malukuSceneStart);
+    
+    // 2. Draw Maluku Transition Overlays (185s to 196s)
+    drawTransitionOverlays(elapsed, malukuSceneStart, "Rumah Adat Maluku");
   }
 }
 
@@ -274,6 +301,9 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   } else if (houseImg == nusaTenggaraImg) {
     peopleX -= 120; // Geser ke kiri
     peopleY += 30;  // Geser ke depan (bawah)
+  } else if (houseImg == malukuImg) {
+    peopleX -= 100; // Geser ke kiri
+    peopleY += 20;  // Geser ke bawah
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
