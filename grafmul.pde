@@ -23,6 +23,10 @@ PImage psumatraImg;
 PImage jawaImg;
 PImage pjawaImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Bali
+PImage baliImg;
+PImage pbaliImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -30,6 +34,10 @@ float sumatraFadeStart = 34.0; // Start fade-out of Sumatra scene
 
 // Scene 2: Java
 float javaSceneStart = 35.0;
+float javaFadeStart = 64.0; // Start fade-out of Java scene
+
+// Scene 3: Bali
+float baliSceneStart = 65.0;
 
 void setup() {
   size(1200, 625);
@@ -43,6 +51,9 @@ void setup() {
   // Load gambar rumah dan orang adat Jawa
   jawaImg = loadImage("Jawa.png");
   pjawaImg = loadImage("Pjawa.png");
+  // Load gambar rumah dan orang adat Bali
+  baliImg = loadImage("Bali.png");
+  pbaliImg = loadImage("Pbali.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -79,14 +90,6 @@ void setup() {
 void draw() {
   float elapsed = (millis() - startTime) / 1000.0;
 
-  // --- TIMING CONSTANTS ---
-  // Scene 1: Sumatra
-  float sumatraSceneStart = 5.0;
-  float sumatraSceneEnd = 35.0; // Runs for 30s total (5s transition + 25s view)
-  
-  // Scene 2: Java
-  float javaSceneStart = 35.0;
-
   // --- SCENE MANAGEMENT ---
   if (elapsed < javaSceneStart) {
     // --- INTRO & SUMATRA SCENE ---
@@ -115,14 +118,30 @@ void draw() {
       rect(0, 0, width, height);
     }
 
-  } else {
+  } else if (elapsed < baliSceneStart) {
     // --- JAWA SCENE ---
     
-    // 1. Draw Jawa Main Scene (runs from 35s onwards)
+    // 1. Draw Jawa Main Scene (runs from 35s to 65s)
     drawMainScene(jawaImg, pjawaImg, elapsed - javaSceneStart);
     
     // 2. Draw Jawa Transition Overlays (35s to 46s)
     drawTransitionOverlays(elapsed, javaSceneStart, "Rumah Adat Jawa");
+    
+    // 3. Add a fade-to-black transition before the Bali scene starts
+    if (elapsed > javaFadeStart) {
+      float fadeAlpha = map(elapsed, javaFadeStart, baliSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- BALI SCENE ---
+    
+    // 1. Draw Bali Main Scene (runs from 65s onwards)
+    drawMainScene(baliImg, pbaliImg, elapsed - baliSceneStart);
+    
+    // 2. Draw Bali Transition Overlays (65s to 76s)
+    drawTransitionOverlays(elapsed, baliSceneStart, "Rumah Adat Bali");
   }
 }
 
@@ -162,6 +181,13 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   float pscaledHeight = peopleImg.height * peopleScale;
   float peopleX = width/2 + scaledWidth/8 - pscaledWidth / 2;
   float peopleY = height - pscaledHeight + 80;
+  
+  // Penyesuaian posisi khusus untuk orang Bali
+  if (houseImg == baliImg) {
+    peopleX -= 40; // Geser ke kiri
+    peopleY += 15; // Geser ke depan (bawah)
+  }
+  
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
 }
 
