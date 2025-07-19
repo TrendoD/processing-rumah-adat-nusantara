@@ -47,6 +47,9 @@ PImage pmalukuImg;
 PImage papuaImg;
 PImage ppapuaImg;
 
+// Tambahkan variabel untuk gambar Outro
+PImage outroImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -78,6 +81,11 @@ float malukuFadeStart = 214.0; // Start fade-out of Maluku scene
 
 // Scene 8: Papua
 float papuaSceneStart = 215.0;
+float papuaFadeStart = 235.0; // Papua scene ends after 20s (215 + 20)
+
+// Scene 9: Outro
+float outroSceneStart = 236.0; // Starts after 1s fade
+float thankYouTextStart = 246.0; // "THANK YOU" appears after 10s (236 + 10)
 
 void setup() {
   size(1200, 625);
@@ -109,6 +117,8 @@ void setup() {
   // Load gambar rumah dan orang adat Papua
   papuaImg = loadImage("Papua.png");
   ppapuaImg = loadImage("Ppapua.png");
+  // Load gambar Outro
+  outroImg = loadImage("Outro.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -269,14 +279,46 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < outroSceneStart) {
     // --- PAPUA SCENE ---
     
-    // 1. Draw Papua Main Scene (runs from 215s onwards)
+    // 1. Draw Papua Main Scene (runs from 215s to 236s)
     drawMainScene(papuaImg, ppapuaImg, elapsed - papuaSceneStart);
     
     // 2. Draw Papua Transition Overlays (215s to 226s)
     drawTransitionOverlays(elapsed, papuaSceneStart, "Rumah Adat Papua");
+    
+    // 3. Add a fade-to-black transition before the Outro scene starts
+    if (elapsed > papuaFadeStart) {
+      float fadeAlpha = map(elapsed, papuaFadeStart, outroSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- OUTRO SCENE ---
+    
+    // 1. Display the outro image
+    background(0);
+    imageMode(CENTER);
+    
+    // Fade in the outro image from black
+    float outroAlpha = map(elapsed, outroSceneStart, outroSceneStart + 2.0, 0, 255);
+    tint(255, constrain(outroAlpha, 0, 255));
+    image(outroImg, width/2, height/2);
+    noTint();
+
+    // 2. Display "THANK YOU" text after 10 seconds
+    if (elapsed > thankYouTextStart) {
+      float textAlpha = map(elapsed, thankYouTextStart, thankYouTextStart + 2.0, 0, 255);
+      fill(0, constrain(textAlpha, 0, 255)); // Black color with fade-in
+      textAlign(CENTER, CENTER);
+      textSize(80); // Large size
+      
+      // Simulate bold by drawing text twice with a slight offset
+      text("THANK YOU", width/2 + 2, height/2 + 2);
+      text("THANK YOU", width/2, height/2);
+    }
   }
 }
 
