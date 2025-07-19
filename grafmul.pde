@@ -35,6 +35,10 @@ PImage pkalimantanImg;
 PImage sulawesiImg;
 PImage psulawesiImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Nusa Tenggara
+PImage nusaTenggaraImg;
+PImage pnusaTenggaraImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -54,6 +58,10 @@ float kalimantanFadeStart = 124.0; // Start fade-out of Kalimantan scene
 
 // Scene 5: Sulawesi
 float sulawesiSceneStart = 125.0;
+float sulawesiFadeStart = 154.0; // Start fade-out of Sulawesi scene
+
+// Scene 6: Nusa Tenggara
+float nusaTenggaraSceneStart = 155.0;
 
 void setup() {
   size(1200, 625);
@@ -76,6 +84,9 @@ void setup() {
   // Load gambar rumah dan orang adat Sulawesi
   sulawesiImg = loadImage("Sulawesi.png");
   psulawesiImg = loadImage("Psulawesi.png");
+  // Load gambar rumah dan orang adat Nusa Tenggara
+  nusaTenggaraImg = loadImage("NusaTenggara.png");
+  pnusaTenggaraImg = loadImage("Pnusatenggara.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -188,14 +199,30 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < nusaTenggaraSceneStart) {
     // --- SULAWESI SCENE ---
     
-    // 1. Draw Sulawesi Main Scene (runs from 125s onwards)
+    // 1. Draw Sulawesi Main Scene (runs from 125s to 155s)
     drawMainScene(sulawesiImg, psulawesiImg, elapsed - sulawesiSceneStart);
     
     // 2. Draw Sulawesi Transition Overlays (125s to 136s)
     drawTransitionOverlays(elapsed, sulawesiSceneStart, "Rumah Adat Sulawesi");
+
+    // 3. Add a fade-to-black transition before the Nusa Tenggara scene starts
+    if (elapsed > sulawesiFadeStart) {
+      float fadeAlpha = map(elapsed, sulawesiFadeStart, nusaTenggaraSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- NUSA TENGGARA SCENE ---
+    
+    // 1. Draw Nusa Tenggara Main Scene (runs from 155s onwards)
+    drawMainScene(nusaTenggaraImg, pnusaTenggaraImg, elapsed - nusaTenggaraSceneStart);
+    
+    // 2. Draw Nusa Tenggara Transition Overlays (155s to 166s)
+    drawTransitionOverlays(elapsed, nusaTenggaraSceneStart, "Rumah Adat Nusa Tenggara");
   }
 }
 
@@ -244,6 +271,9 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
     peopleX -= 80; // Geser ke kiri agar dekat tangga
   } else if (houseImg == sulawesiImg) {
     peopleX -= 100; // Geser ke kiri
+  } else if (houseImg == nusaTenggaraImg) {
+    peopleX -= 120; // Geser ke kiri
+    peopleY += 30;  // Geser ke depan (bawah)
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
