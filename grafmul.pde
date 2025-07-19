@@ -27,6 +27,10 @@ PImage pjawaImg;
 PImage baliImg;
 PImage pbaliImg;
 
+// Tambahkan variabel untuk gambar rumah dan orang adat Kalimantan
+PImage kalimantanImg;
+PImage pkalimantanImg;
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -38,6 +42,10 @@ float javaFadeStart = 64.0; // Start fade-out of Java scene
 
 // Scene 3: Bali
 float baliSceneStart = 65.0;
+float baliFadeStart = 94.0; // Start fade-out of Bali scene
+
+// Scene 4: Kalimantan
+float kalimantanSceneStart = 95.0;
 
 void setup() {
   size(1200, 625);
@@ -54,6 +62,9 @@ void setup() {
   // Load gambar rumah dan orang adat Bali
   baliImg = loadImage("Bali.png");
   pbaliImg = loadImage("Pbali.png");
+  // Load gambar rumah dan orang adat Kalimantan
+  kalimantanImg = loadImage("Kalimantan.png");
+  pkalimantanImg = loadImage("Pkalimantan.png");
   
   // Inisialisasi awan dengan kecepatan bervariasi berdasarkan ukuran
   clouds = new Cloud[8];
@@ -134,14 +145,30 @@ void draw() {
       rect(0, 0, width, height);
     }
     
-  } else {
+  } else if (elapsed < kalimantanSceneStart) {
     // --- BALI SCENE ---
     
-    // 1. Draw Bali Main Scene (runs from 65s onwards)
+    // 1. Draw Bali Main Scene (runs from 65s to 95s)
     drawMainScene(baliImg, pbaliImg, elapsed - baliSceneStart);
     
     // 2. Draw Bali Transition Overlays (65s to 76s)
     drawTransitionOverlays(elapsed, baliSceneStart, "Rumah Adat Bali");
+
+    // 3. Add a fade-to-black transition before the Kalimantan scene starts
+    if (elapsed > baliFadeStart) {
+      float fadeAlpha = map(elapsed, baliFadeStart, kalimantanSceneStart, 0, 255);
+      fill(0, fadeAlpha);
+      rect(0, 0, width, height);
+    }
+    
+  } else {
+    // --- KALIMANTAN SCENE ---
+    
+    // 1. Draw Kalimantan Main Scene (runs from 95s onwards)
+    drawMainScene(kalimantanImg, pkalimantanImg, elapsed - kalimantanSceneStart);
+    
+    // 2. Draw Kalimantan Transition Overlays (95s to 106s)
+    drawTransitionOverlays(elapsed, kalimantanSceneStart, "Rumah Adat Kalimantan");
   }
 }
 
@@ -186,6 +213,8 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   if (houseImg == baliImg) {
     peopleX -= 40; // Geser ke kiri
     peopleY += 15; // Geser ke depan (bawah)
+  } else if (houseImg == kalimantanImg) {
+    peopleX -= 80; // Geser ke kiri agar dekat tangga
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
