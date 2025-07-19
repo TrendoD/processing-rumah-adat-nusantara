@@ -3,6 +3,7 @@
 // Enhanced dengan efek atmosfer dan interaksi elemen
 
 float time = 0;
+float skyTime = 0; // Variabel untuk progresi langit yang berkelanjutan
 float windStrength = 0;
 float fogIntensity = 0;
 Cloud[] clouds;
@@ -154,6 +155,13 @@ void setup() {
 
 void draw() {
   float elapsed = (millis() - startTime) / 1000.0;
+
+  // Hitung skyTime untuk progresi hari yang berkelanjutan dari fajar hingga sore
+  if (elapsed >= sumatraSceneStart && elapsed < papuaFadeStart) {
+    // Petakan durasi adegan utama (5 detik hingga 235 detik) ke nilai dari 0 hingga PI.
+    // Ini akan menggerakkan fungsi sin() untuk kecerahan dari matahari terbit menuju terbenam, tetapi berhenti di sore hari.
+    skyTime = map(elapsed, sumatraSceneStart, papuaFadeStart, 0, PI);
+  }
 
   // --- SCENE MANAGEMENT ---
   if (elapsed < javaSceneStart) {
@@ -460,8 +468,9 @@ void drawSky() {
 }
 
 float getSkyBrightness() {
-  // Menghitung kecerahan langit berdasarkan waktu dengan siklus yang lebih realistis
-  return (sin(time * 0.8) + 1) / 2; // Siklus lebih lambat untuk transisi yang halus
+  // Menghitung kecerahan langit berdasarkan skyTime untuk progresi berkelanjutan
+  // Ini memastikan langit berubah dari pagi ke sore di semua adegan, tanpa menjadi malam.
+  return (sin(skyTime) + 1) / 2;
 }
 
 void updateEnvironmentalEffects() {
