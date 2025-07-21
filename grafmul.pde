@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 // Animasi Background Kebudayaan Indonesia
 // Cocok untuk latar belakang rumah adat
 // Enhanced dengan efek atmosfer dan interaksi elemen
@@ -50,6 +52,9 @@ PImage ppapuaImg;
 
 // Tambahkan variabel untuk gambar Outro
 PImage outroImg;
+
+// Variabel untuk musik latar
+SoundFile bgm;
 
 // --- NARRATIVE TEXTS ---
 String[] sumatraNarrative = {
@@ -201,6 +206,17 @@ void setup() {
 
   // Di setup, setelah size(1200, 700);
   startTime = millis();
+  
+  // Muat musik di thread terpisah agar tidak memblokir rendering
+  thread("loadSound");
+}
+
+void loadSound() {
+  // Muat dan putar musik latar di background
+  bgm = new SoundFile(this, "bgm.mp3");
+  bgm.jump(0); // Memastikan lagu mulai dari detik 0
+  bgm.loop(); // Putar secara berulang
+  bgm.amp(0.1); // Atur volume ke 10%
 }
 
 void draw() {
@@ -220,8 +236,9 @@ void draw() {
     // 1. Initial Intro Image (0-5s)
     if (elapsed < sumatraSceneStart) {
       background(0);
-      float imageAlpha = map(elapsed, 4.0, 5.0, 255, 0);
-      tint(255, imageAlpha);
+      // Fade out lebih lambat selama 2 detik terakhir agar tidak terasa cepat
+      float imageAlpha = map(elapsed, 3.0, 5.0, 255, 0);
+      tint(255, constrain(imageAlpha, 0, 255)); // Gunakan constrain untuk keamanan
       imageMode(CENTER);
       image(introImg, width/2, height/2);
       noTint();
