@@ -51,6 +51,56 @@ PImage ppapuaImg;
 // Tambahkan variabel untuk gambar Outro
 PImage outroImg;
 
+// --- NARRATIVE TEXTS ---
+String[] sumatraNarrative = {
+  "Ini adalah Rumah Gadang dari Minangkabau, Sumatra Barat.",
+  "Bentuk atapnya yang runcing seperti tanduk kerbau disebut gonjong.",
+  "Rumah ini tidak hanya tempat tinggal, tapi juga pusat kehidupan sosial dan adat.",
+  "Setiap ukiran di dindingnya memiliki makna filosofis yang mendalam."
+};
+String[] javaNarrative = {
+  "Selamat datang di Rumah Joglo, arsitektur khas masyarakat Jawa.",
+  "Atapnya yang menjulang tinggi ditopang oleh tiang utama bernama 'soko guru'.",
+  "Strukturnya yang terbuka mencerminkan sifat ramah dan kekeluargaan.",
+  "Joglo adalah simbol status, kemakmuran, dan kearifan pemiliknya."
+};
+String[] baliNarrative = {
+  "Kita berada di Bali, di depan Gapura Candi Bentar.",
+  "Ini bukan rumah, melainkan gerbang agung menuju pura atau puri.",
+  "Belahannya yang simetris melambangkan keseimbangan antara kebaikan dan keburukan.",
+  "Gapura ini adalah representasi konsep dualisme 'Rwa Bhineda' dalam Hindu Bali."
+};
+String[] kalimantanNarrative = {
+  "Ini adalah Rumah Betang, rumah panjang suku Dayak di Kalimantan.",
+  "Rumah ini bisa menampung puluhan keluarga dalam satu atap.",
+  "Struktur panggungnya yang tinggi melindunginya dari banjir dan binatang buas.",
+  "Rumah Betang adalah jantung kehidupan komunal dan pertahanan suku."
+};
+String[] sulawesiNarrative = {
+  "Di hadapan kita berdiri Tongkonan, rumah adat masyarakat Toraja.",
+  "Atapnya yang melengkung megah menyerupai perahu, simbol leluhur mereka.",
+  "Rumah ini adalah pusat upacara adat, terutama yang berkaitan dengan kematian.",
+  "Jumlah tanduk kerbau di depan rumah menunjukkan status sosial keluarga."
+};
+String[] nusaTenggaraNarrative = {
+  "Ini adalah Mbaru Niang dari Wae Rebo, Flores, Nusa Tenggara Timur.",
+  "Bentuknya yang kerucut unik melambangkan persatuan dengan alam dan leluhur.",
+  "Terletak di pegunungan terpencil, rumah ini adalah benteng tradisi kuno.",
+  "Satu Mbaru Niang biasanya dihuni oleh beberapa keluarga secara bersama-sama."
+};
+String[] malukuNarrative = {
+  "Selamat datang di Rumah Baileo, jantung komunitas di Maluku.",
+  "Bangunannya yang terbuka tanpa dinding melambangkan keterbukaan dan musyawarah.",
+  "Baileo berfungsi sebagai balai pertemuan adat dan tempat menyimpan benda suci.",
+  "Juga menjadi pusat untuk menyelesaikan perselisihan antar warga."
+};
+String[] papuaNarrative = {
+  "Ini adalah Honai, rumah khas suku Dani di Lembah Baliem, Papua.",
+  "Bentuknya bundar dengan atap jerami untuk menahan hawa dingin pegunungan.",
+  "Rumah ini tidak berjendela untuk menjaga kehangatan dari api di dalamnya.",
+  "Honai adalah pusat kehidupan keluarga dan tempat menyimpan hasil kebun."
+};
+
 // --- TIMING CONSTANTS ---
 // Scene 1: Sumatra
 float sumatraSceneStart = 5.0;
@@ -180,6 +230,7 @@ void draw() {
     
     // 2. Draw Sumatra Main Scene (runs from 5s to 35s)
     drawMainScene(sumatraImg, psumatraImg, elapsed - sumatraSceneStart);
+    drawSubtitle(sumatraNarrative, elapsed, sumatraSceneStart, javaSceneStart);
     
     // 3. Draw Sumatra Transition Overlays (5s to 15s)
     drawTransitionOverlays(elapsed, sumatraSceneStart, "Rumah Adat Sumatra");
@@ -196,6 +247,7 @@ void draw() {
     
     // 1. Draw Jawa Main Scene (runs from 35s to 65s)
     drawMainScene(jawaImg, pjawaImg, elapsed - javaSceneStart);
+    drawSubtitle(javaNarrative, elapsed, javaSceneStart, baliSceneStart);
     
     // 2. Draw Jawa Transition Overlays (35s to 46s)
     drawTransitionOverlays(elapsed, javaSceneStart, "Rumah Adat Jawa");
@@ -212,7 +264,8 @@ void draw() {
     
     // 1. Draw Bali Main Scene (runs from 65s to 95s)
     drawMainScene(baliImg, pbaliImg, elapsed - baliSceneStart);
-    
+    drawSubtitle(baliNarrative, elapsed, baliSceneStart, kalimantanSceneStart);
+
     // 2. Draw Bali Transition Overlays (65s to 76s)
     drawTransitionOverlays(elapsed, baliSceneStart, "Rumah Adat Bali");
 
@@ -228,7 +281,8 @@ void draw() {
     
     // 1. Draw Kalimantan Main Scene (runs from 95s to 125s)
     drawMainScene(kalimantanImg, pkalimantanImg, elapsed - kalimantanSceneStart);
-    
+    drawSubtitle(kalimantanNarrative, elapsed, kalimantanSceneStart, sulawesiSceneStart);
+
     // 2. Draw Kalimantan Transition Overlays (95s to 106s)
     drawTransitionOverlays(elapsed, kalimantanSceneStart, "Rumah Adat Kalimantan");
 
@@ -244,7 +298,8 @@ void draw() {
     
     // 1. Draw Sulawesi Main Scene (runs from 125s to 155s)
     drawMainScene(sulawesiImg, psulawesiImg, elapsed - sulawesiSceneStart);
-    
+    drawSubtitle(sulawesiNarrative, elapsed, sulawesiSceneStart, nusaTenggaraSceneStart);
+
     // 2. Draw Sulawesi Transition Overlays (125s to 136s)
     drawTransitionOverlays(elapsed, sulawesiSceneStart, "Rumah Adat Sulawesi");
 
@@ -260,7 +315,8 @@ void draw() {
     
     // 1. Draw Nusa Tenggara Main Scene (runs from 155s to 185s)
     drawMainScene(nusaTenggaraImg, pnusaTenggaraImg, elapsed - nusaTenggaraSceneStart);
-    
+    drawSubtitle(nusaTenggaraNarrative, elapsed, nusaTenggaraSceneStart, malukuSceneStart);
+
     // 2. Draw Nusa Tenggara Transition Overlays (155s to 166s)
     drawTransitionOverlays(elapsed, nusaTenggaraSceneStart, "Rumah Adat Nusa Tenggara");
 
@@ -276,6 +332,7 @@ void draw() {
     
     // 1. Draw Maluku Main Scene (runs from 185s to 215s)
     drawMainScene(malukuImg, pmalukuImg, elapsed - malukuSceneStart);
+    drawSubtitle(malukuNarrative, elapsed, malukuSceneStart, papuaSceneStart);
     
     // 2. Draw Maluku Transition Overlays (185s to 196s)
     drawTransitionOverlays(elapsed, malukuSceneStart, "Rumah Adat Maluku");
@@ -292,6 +349,7 @@ void draw() {
     
     // 1. Draw Papua Main Scene (runs from 215s to 236s)
     drawMainScene(papuaImg, ppapuaImg, elapsed - papuaSceneStart);
+    drawSubtitle(papuaNarrative, elapsed, papuaSceneStart, outroSceneStart);
     
     // 2. Draw Papua Transition Overlays (215s to 226s)
     drawTransitionOverlays(elapsed, papuaSceneStart, "Rumah Adat Papua");
@@ -393,6 +451,40 @@ void drawMainScene(PImage houseImg, PImage peopleImg, float sceneTime) {
   }
   
   image(peopleImg, peopleX, peopleY, pscaledWidth, pscaledHeight);
+}
+
+void drawSubtitle(String[] texts, float elapsed, float sceneStart, float sceneEnd) {
+  float narrativeStartTime = sceneStart + 5.0;
+  float narrativeEndTime = sceneEnd - 2.0;
+  float narrativeDuration = narrativeEndTime - narrativeStartTime;
+
+  if (elapsed > narrativeStartTime && elapsed < narrativeEndTime) {
+    float timePerLine = narrativeDuration / texts.length;
+    float sceneTime = elapsed - narrativeStartTime;
+    int lineIndex = constrain(floor(sceneTime / timePerLine), 0, texts.length - 1);
+    String text = texts[lineIndex];
+
+    // Fade logic for each individual line
+    float lineStartTime = lineIndex * timePerLine;
+    float lineEndTime = (lineIndex + 1) * timePerLine;
+    float fadeInDuration = 0.5;
+    float fadeOutDuration = 0.5;
+
+    float textAlpha = 255;
+    if (sceneTime > lineStartTime && sceneTime < lineStartTime + fadeInDuration) {
+      textAlpha = map(sceneTime, lineStartTime, lineStartTime + fadeInDuration, 0, 255);
+    } else if (sceneTime > lineEndTime - fadeOutDuration && sceneTime < lineEndTime) {
+      textAlpha = map(sceneTime, lineEndTime - fadeOutDuration, lineEndTime, 255, 0);
+    }
+    
+    // Styling for the subtitle
+    textSize(24);
+    textAlign(CENTER, BOTTOM);
+    fill(0, 0, 0, textAlpha * 0.7); // Shadow for readability
+    text(text, width/2 + 1, height - 29);
+    fill(255, 255, 255, textAlpha); // White text
+    text(text, width/2, height - 30);
+  }
 }
 
 void drawTransitionOverlays(float elapsed, float sceneStart, String text) {
